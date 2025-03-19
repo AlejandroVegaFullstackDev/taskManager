@@ -163,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadTasks();
                 document.getElementById('createTitle').value = '';
                 document.getElementById('createDescription').value = '';
-                document.getElementById('createStatus').value = '';
             } else {
                 const data = await response.json();
                 Swal.fire('Error', JSON.stringify(data), 'error');
