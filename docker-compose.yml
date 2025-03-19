@@ -1,0 +1,32 @@
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskmanager_app
+    volumes:
+      - ./:/var/www
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      # Puedes agregar aquí otras variables de entorno necesarias para Laravel
+      DB_HOST: db
+
+  db:
+    image: postgres:15
+    container_name: taskmanager_db
+    restart: always
+    environment:
+      POSTGRES_DB: taskmanagerdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: nDYKAHm9kgMuUNgSiN5y
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
