@@ -12,12 +12,10 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
     
-        // IMPORTANTE: usar auth('api') si el guard por defecto es 'web'
         if (! $token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }
     
-        // Devolver token y opcionalmente la expiración
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',

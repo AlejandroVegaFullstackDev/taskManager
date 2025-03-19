@@ -5,7 +5,7 @@ use App\Http\Controllers\TaskViewController;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('login');
 });
 
 Route::get('/login', function () {

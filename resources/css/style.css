@@ -1,0 +1,162 @@
+/* Estilos generales */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+    height: 100vh;
+    margin: 0;
+}
+
+.container-fluid {
+    height: 100%;
+}
+
+h1 {
+    font-weight: bold;
+    color: #343a40;
+}
+
+/* Mejoras en la tabla */
+.table-container {
+    height: 100%;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #ffffff;
+    width: 100%;
+    display: block;
+}
+
+/* Encabezado fijo */
+.table thead {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+/* Cuerpo con scroll interno */
+.table tbody {
+    display: block;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Filas y celdas centradas */
+.table thead tr,
+.table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table th,
+.table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.75rem;
+}
+
+/* Asegura que el badge ocupe el 100% del ancho de su celda */
+.badge {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.5em 0.75em;
+    border-radius: 12px;
+}
+
+/* Botón flotante */
+#createTaskButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    border-radius: 50%;
+    padding: 15px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+}
+
+#createTaskButton .button-text {
+    display: none;
+    margin-left: 10px;
+}
+
+#createTaskButton:hover {
+    width: auto;
+    padding: 15px 25px;
+    border-radius: 50px;
+}
+
+#createTaskButton:hover .button-text {
+    display: inline;
+}
+
+/* Estilos adicionales para formularios en los modales */
+.modal .form-control,
+.modal .form-select {
+    border-radius: 8px;
+}
+
+/* Fondo oscurecido cuando el loader está activo */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Más oscuro */
+    z-index: 1049;
+    display: none;
+}
+
+/* Estilos del Loader Global */
+#globalLoader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+}
+
+/* Loader (From Uiverse.io by akshat-patel28) */
+.loader {
+  position: relative;
+  overflow: hidden;
+  border-right: 3px solid;
+  width: 0px;
+  animation: typewriter 2s steps(10) infinite alternate, blink 0.5s steps(10) infinite;
+}
+
+.loader-text {
+  font-size: 40px;
+  font-weight: 700;
+  background: linear-gradient(to right, #159957, #155799);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes typewriter {
+  0% { width: 0px; }
+  100% { width: 240px; }
+}
+
+@keyframes blink {
+  0% { border-right-color: rgba(255,255,255,0.75); }
+  100% { border-right-color: transparent; }
+}

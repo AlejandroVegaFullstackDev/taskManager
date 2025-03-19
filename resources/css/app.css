@@ -9,3 +9,32 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+
+.main-container{
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+
+.login-container {
+    animation: fadeIn 0.6s ease;
+    background-color: #ffffff;
+  }
+  .login-title {
+    font-weight: 600;
+    color: #343a40;
+  }
+  /* Hover en el contenedor */
+  .login-container:hover {
+    transform: scale(1.01);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+  }
+  /* Animación de entrada */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+  }
