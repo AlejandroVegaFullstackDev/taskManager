@@ -155,11 +155,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             if (response.ok) {
+                
                 const createModalEl = document.getElementById('createTaskModal');
                 const modalInstance = bootstrap.Modal.getInstance(createModalEl);
                 modalInstance.hide();
                 Swal.fire('Éxito', 'La tarea fue creada correctamente.', 'success');
                 loadTasks();
+                document.getElementById('createTitle').value = '';
+                document.getElementById('createDescription').value = '';
+                document.getElementById('createStatus').value = '';
             } else {
                 const data = await response.json();
                 Swal.fire('Error', JSON.stringify(data), 'error');
