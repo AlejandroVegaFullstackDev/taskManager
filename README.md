@@ -1,67 +1,164 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+TaskManager – API & Plataforma de Gestión de Tareas
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Proyecto personal pensado para mostrar buenas prácticas en desarrollo Full‑Stack con Laravel + PostgreSQL + Docker.
 
-## About Laravel
+✨ Características principales
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+API RESTful con operaciones CRUD para tareas.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Autenticación JWT (Laravel Sanctum) con expiración configurable.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Arquitectura hexagonal: controladores → servicios → repositorios → modelos.
 
-## Learning Laravel
+Docker‑first: entorno replicable en cualquier máquina.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+CI/CD listo para GitHub Actions (tests + Lint + Build).
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Cobertura de tests: unitarios y de integración (PHPUnit).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+🚀 Demo local en 5 pasos
 
-## Laravel Sponsors
+# 1. Clona el repo
+$ git clone https://github.com/tu‑usuario/taskmanager.git && cd taskmanager
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# 2. Copia variables de entorno
+$ cp .env.example .env    # ajusta valores si lo deseas
 
-### Premium Partners
+# 3. Levanta servicios
+$ docker compose up -d --build
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+# 4. Instala dependencias & ejecuta migraciones
+$ docker compose exec app composer install
+$ docker compose exec app php artisan migrate --seed
 
-## Contributing
+# 5. Visita la app (frontend opcional)
+http://localhost:3000   # si usas el front React opcional
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Credenciales iniciales (Seeds)email: admin@example.compassword: passwordPuedes cambiarlas en database/seeders/UserSeeder.php antes de levantar el stack.
 
-## Code of Conduct
+🗄️ Stack Tecnológico
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Capa
 
-## Security Vulnerabilities
+Tecnología
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Versión
 
-## License
+Backend
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# taskManager
+PHP / Laravel
+
+8.3 / 10.x
+
+Base de datos
+
+PostgreSQL
+
+15
+
+Autenticación
+
+JWT (Sanctum)
+
+—
+
+Contenedores
+
+Docker & Compose
+
+26+
+
+CI/CD
+
+GitHub Actions
+
+—
+
+Testing
+
+PHPUnit + Pest
+
+—
+
+📂 Estructura de carpetas (backend)
+
+app/
+ ├─ Http/Controllers       // Entradas HTTP
+ ├─ Domain/Models          // Entidades de dominio (Eloquent)
+ ├─ Domain/Repositories    // Interfaces
+ ├─ Infrastructure/Repos   // Implementaciones Eloquent
+ └─ Services               // Casos de uso
+
+🔐 Autenticación
+
+Login – POST /api/login
+
+{ "email": "admin@example.com", "password": "password" }
+
+Respuesta → access_token, token_type, expires_in.
+
+Incluye la cabecera:
+
+Authorization: Bearer <token>
+
+📑 Endpoints de Tareas
+
+Método
+
+Endpoint
+
+Descripción
+
+GET
+
+/api/tasks
+
+Listar tareas
+
+POST
+
+/api/tasks
+
+Crear tarea
+
+GET
+
+/api/tasks/{id}
+
+Obtener tarea
+
+PUT
+
+/api/tasks/{id}
+
+Actualizar tarea
+
+DELETE
+
+/api/tasks/{id}
+
+Eliminar tarea
+
+Consulta docs/openapi.yaml para una especificación completa (OpenAPI 3.1).
+
+🧪 Pruebas
+
+# Ejecutar todas las pruebas
+$ docker compose exec app php artisan test
+
+# Cobertura (HTML)
+$ docker compose exec app phpdbg -qrr vendor/bin/phpunit --coverage-html storage/coverage
+
+☁️ Despliegue en producción
+
+Se puede desplegar en cualquier PaaS que soporte Docker (AWS ECS/Fargate, Railway, Fly.io, etc.).
+Ejemplo de workflow GitHub Actions a Railway incluido en .github/workflows/deploy.yml.
+
+📄 Licencia
+
+Publicado bajo la licencia MIT. Siéntete libre de usarlo como base para tus propios proyectos.
+
+🤝 Créditos y contexto
+
+Este repositorio nació como una prueba técnica; posteriormente fue refactorizado y ampliado para servir como ejemplo público de buenas prácticas. Todo el código mostrado aquí es 100 % original y no contiene información ni activos privados de terceros.
+
