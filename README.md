@@ -1,164 +1,119 @@
-TaskManager – API & Plataforma de Gestión de Tareas
+# ✅ TaskManager — API de Gestión de Tareas
 
-Proyecto personal pensado para mostrar buenas prácticas en desarrollo Full‑Stack con Laravel + PostgreSQL + Docker.
+API REST en **Laravel 12** para gestionar tareas con **autenticación JWT**.
+Diseñada en capas (**controllers → services → repositories → models**) para
+mantener el dominio desacoplado de la infraestructura. Lista para Docker y con
+suite de tests en GitHub Actions.
 
-✨ Características principales
+![CI](https://github.com/AlejandroVegaFullstackDev/taskManager/actions/workflows/ci.yml/badge.svg)
+![PHP](https://img.shields.io/badge/php-8.2-777BB4)
+![Laravel](https://img.shields.io/badge/laravel-12-FF2D20)
+![PostgreSQL](https://img.shields.io/badge/postgres-15-336791)
+![Tests](https://img.shields.io/badge/tests-PHPUnit-3776AB)
 
-API RESTful con operaciones CRUD para tareas.
+---
 
-Autenticación JWT (Laravel Sanctum) con expiración configurable.
+## ✨ Características
 
-Arquitectura hexagonal: controladores → servicios → repositorios → modelos.
+- **CRUD** de tareas vía API REST.
+- **Autenticación JWT** con `tymon/jwt-auth` (register, login, refresh, logout).
+- **Arquitectura en capas**: el controlador delega en un **servicio**, que usa un
+  **repositorio** (interfaz) — inversión de dependencias vía contenedor de Laravel.
+- **Validación** con Form Requests.
+- **Tests** de feature (API + auth) y unitarios (servicio) con PHPUnit.
 
-Docker‑first: entorno replicable en cualquier máquina.
+> El portafolio mencionaba "Sanctum": la autenticación real usa
+> **`tymon/jwt-auth`** (tokens JWT con TTL configurable).
 
-CI/CD listo para GitHub Actions (tests + Lint + Build).
+---
 
-Cobertura de tests: unitarios y de integración (PHPUnit).
+## 🧱 Arquitectura
 
-🚀 Demo local en 5 pasos
-
-# 1. Clona el repo
-$ git clone https://github.com/tu‑usuario/taskmanager.git && cd taskmanager
-
-# 2. Copia variables de entorno
-$ cp .env.example .env    # ajusta valores si lo deseas
-
-# 3. Levanta servicios
-$ docker compose up -d --build
-
-# 4. Instala dependencias & ejecuta migraciones
-$ docker compose exec app composer install
-$ docker compose exec app php artisan migrate --seed
-
-# 5. Visita la app (frontend opcional)
-http://localhost:3000   # si usas el front React opcional
-
-Credenciales iniciales (Seeds)email: admin@example.compassword: passwordPuedes cambiarlas en database/seeders/UserSeeder.php antes de levantar el stack.
-
-🗄️ Stack Tecnológico
-
-Capa
-
-Tecnología
-
-Versión
-
-Backend
-
-PHP / Laravel
-
-8.3 / 10.x
-
-Base de datos
-
-PostgreSQL
-
-15
-
-Autenticación
-
-JWT (Sanctum)
-
-—
-
-Contenedores
-
-Docker & Compose
-
-26+
-
-CI/CD
-
-GitHub Actions
-
-—
-
-Testing
-
-PHPUnit + Pest
-
-—
-
-📂 Estructura de carpetas (backend)
-
+```
 app/
- ├─ Http/Controllers       // Entradas HTTP
- ├─ Domain/Models          // Entidades de dominio (Eloquent)
- ├─ Domain/Repositories    // Interfaces
- ├─ Infrastructure/Repos   // Implementaciones Eloquent
- └─ Services               // Casos de uso
+├── Http/
+│   ├── Controllers/      TaskController, AuthController  (capa de entrada, delgada)
+│   └── Requests/         StoreTaskRequest, UpdateTaskRequest  (validación)
+├── Services/             TaskService  (lógica de aplicación)
+├── Repositories/         TaskRepositoryInterface + TaskRepository  (persistencia)
+├── Exceptions/           TaskNotFoundException  (render 404 JSON)
+└── Models/               Task, User
+```
 
-🔐 Autenticación
+El binding `TaskRepositoryInterface → TaskRepository` se registra en
+`AppServiceProvider`, así el servicio depende de la **interfaz**, no de Eloquent.
 
-Login – POST /api/login
+---
 
-{ "email": "admin@example.com", "password": "password" }
+## 🔗 Endpoints
 
-Respuesta → access_token, token_type, expires_in.
+| Método | Ruta | Auth | Descripción |
+|--------|------|------|-------------|
+| `POST` | `/api/register` | público | Crea usuario y devuelve token |
+| `POST` | `/api/login` | público | Devuelve token JWT |
+| `POST` | `/api/refresh` | JWT | Renueva el token |
+| `POST` | `/api/logout` | JWT | Invalida el token |
+| `GET`  | `/api/tasks` | JWT | Lista tareas |
+| `POST` | `/api/tasks` | JWT | Crea tarea |
+| `GET`  | `/api/tasks/{id}` | JWT | Detalle de tarea |
+| `PUT`  | `/api/tasks/{id}` | JWT | Actualiza tarea |
+| `DELETE` | `/api/tasks/{id}` | JWT | Elimina tarea |
 
-Incluye la cabecera:
+Las rutas protegidas requieren `Authorization: Bearer <token>`. El campo
+`status` de una tarea acepta `pendiente` o `completada`.
 
-Authorization: Bearer <token>
+```jsonc
+// POST /api/tasks
+{ "title": "Comprar pan", "description": "En la tienda", "status": "pendiente" }
+```
 
-📑 Endpoints de Tareas
+---
 
-Método
+## 🚀 Cómo correrlo
 
-Endpoint
+### Local (SQLite, rápido)
 
-Descripción
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan jwt:secret          # genera JWT_SECRET
+touch database/database.sqlite  # .env trae DB_CONNECTION=sqlite
+php artisan migrate
+php artisan serve               # http://localhost:8000
+```
 
-GET
+### Docker (PostgreSQL)
 
-/api/tasks
+```bash
+cp .env.example .env            # ajusta DB_* y pon DB_CONNECTION=pgsql
+docker compose up -d --build
+docker compose exec app php artisan migrate --seed
+```
 
-Listar tareas
+El seeder crea un usuario de prueba `test@example.com` / `password`.
 
-POST
+---
 
-/api/tasks
+## 🧪 Tests
 
-Crear tarea
+```bash
+php artisan test          # corre la suite (SQLite en memoria, vía phpunit.xml)
+```
 
-GET
+Cubren registro/login/refresh, protección por JWT y el CRUD completo de tareas,
+además de tests unitarios del `TaskService` con repositorio simulado (Mockery).
+La suite corre en **GitHub Actions** (`.github/workflows/ci.yml`).
 
-/api/tasks/{id}
+---
 
-Obtener tarea
+## 🛠️ Stack
 
-PUT
+`PHP 8.2` · `Laravel 12` · `tymon/jwt-auth` · `PostgreSQL 15` / `SQLite` ·
+`PHPUnit 11` · `Docker`
 
-/api/tasks/{id}
+---
 
-Actualizar tarea
+## 📄 Licencia
 
-DELETE
-
-/api/tasks/{id}
-
-Eliminar tarea
-
-Consulta docs/openapi.yaml para una especificación completa (OpenAPI 3.1).
-
-🧪 Pruebas
-
-# Ejecutar todas las pruebas
-$ docker compose exec app php artisan test
-
-# Cobertura (HTML)
-$ docker compose exec app phpdbg -qrr vendor/bin/phpunit --coverage-html storage/coverage
-
-☁️ Despliegue en producción
-
-Se puede desplegar en cualquier PaaS que soporte Docker (AWS ECS/Fargate, Railway, Fly.io, etc.).
-Ejemplo de workflow GitHub Actions a Railway incluido en .github/workflows/deploy.yml.
-
-📄 Licencia
-
-Publicado bajo la licencia MIT. Siéntete libre de usarlo como base para tus propios proyectos.
-
-🤝 Créditos y contexto
-
-Este repositorio nació como una prueba técnica; posteriormente fue refactorizado y ampliado para servir como ejemplo público de buenas prácticas. Todo el código mostrado aquí es 100 % original y no contiene información ni activos privados de terceros.
-
+MIT

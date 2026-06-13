@@ -1,3 +1,5 @@
+# Los valores se leen del archivo `.env` (copia de `.env.example`). Si no existe,
+# se usan los defaults de desarrollo definidos con la sintaxis ${VAR:-default}.
 
 services:
   app:
@@ -12,17 +14,21 @@ services:
     depends_on:
       - db
     environment:
-      # Puedes agregar aquí otras variables de entorno necesarias para Laravel
+      DB_CONNECTION: pgsql
       DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-taskmanagerdb}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
 
   db:
     image: postgres:15
     container_name: taskmanager_db
     restart: always
     environment:
-      POSTGRES_DB: taskmanagerdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: nDYKAHm9kgMuUNgSiN5y
+      POSTGRES_DB: ${DB_DATABASE:-taskmanagerdb}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     ports:
       - "5432:5432"
     volumes:
