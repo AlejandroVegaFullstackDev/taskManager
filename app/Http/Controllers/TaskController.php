@@ -2,84 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
-use App\Repositories\TaskRepositoryInterface;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
+use App\Services\TaskService;
+use Illuminate\Http\JsonResponse;
 
 class TaskController extends Controller
 {
-    protected $tasks;
-
-
-    public function __construct(TaskRepositoryInterface $tasks)
-    {
-        $this->tasks = $tasks;
-    }
+    public function __construct(
+        private readonly TaskService $tasks,
+    ) {}
 
     // GET /api/tasks
-    public function index()
+    public function index(): JsonResponse
     {
-        return response()->json($this->tasks->all());
+        return response()->json($this->tasks->list());
     }
 
     // POST /api/tasks
-    public function store(Request $request)
+    public function store(StoreTaskRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'title'       => 'required|string',
-            'description' => 'required|string',
-            'status'      => 'required|in:pendiente,completada',
-        ]);
+        $task = $this->tasks->create($request->validated());
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $task = $this->tasks->create($request->all());
         return response()->json($task, 201);
     }
 
     // GET /api/tasks/{id}
-    public function show($id)
+    public function show(int $id): JsonResponse
     {
-        $task = $this->tasks->find($id);
-        if (!$task) {
-            return response()->json(['error' => 'Tarea no encontrada'], 404);
-        }
-        return response()->json($task);
+        return response()->json($this->tasks->find($id));
     }
 
     // PUT/PATCH /api/tasks/{id}
-    public function update(Request $request, $id)
+    public function update(UpdateTaskRequest $request, int $id): JsonResponse
     {
-        $task = $this->tasks->find($id);
-        if (!$task) {
-            return response()->json(['error' => 'Tarea no encontrada'], 404);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'title'       => 'sometimes|required|string',
-            'description' => 'sometimes|required|string',
-            'status'      => 'sometimes|required|in:pendiente,completada',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $this->tasks->update($task, $request->all());
-        return response()->json($task);
+        return response()->json($this->tasks->update($id, $request->validated()));
     }
 
     // DELETE /api/tasks/{id}
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
-        $task = $this->tasks->find($id);
-        if (!$task) {
-            return response()->json(['error' => 'Tarea no encontrada'], 404);
-        }
-        $this->tasks->delete($task);
+        $this->tasks->delete($id);
+
         return response()->json(['message' => 'Tarea eliminada correctamente']);
     }
 }

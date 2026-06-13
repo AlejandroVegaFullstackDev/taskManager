@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Tymon\JWTAuth\Http\Middleware\Authenticate as JWTAuthMiddleware;
+use Tymon\JWTAuth\Http\Middleware\RefreshToken as JWTRefreshMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
